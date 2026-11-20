@@ -19,7 +19,6 @@
         .font-mono-receipt {
             font-family: 'Share Tech Mono', monospace;
         }
-        /* Efek outline hitam pada teks tombol ULANGI dan YAKIN persis seperti referensi */
         .text-stroke-black {
             color: #ffffff;
             -webkit-text-stroke: 2px #000000;
@@ -31,21 +30,13 @@
                 -webkit-text-stroke: 1.5px #000000;
             }
         }
-        /* Animasi kertas struk keluar dari printer termal */
         @keyframes printSlideDown {
-            0% {
-                transform: translateY(-24px);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            0% { transform: translateY(-24px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
         .animate-receipt {
             animation: printSlideDown 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        /* Garis laser pemindai barcode saat simulasi audit */
         @keyframes scanLaser {
             0%, 100% { top: 10%; }
             50% { top: 85%; }
@@ -59,7 +50,6 @@
             box-shadow: 0 0 8px #ef4444, 0 0 12px #dc2626;
             animation: scanLaser 1.2s ease-in-out infinite;
         }
-        /* Efek sobekan gerigi kertas termal */
         .receipt-edge-top {
             background-image: radial-gradient(circle at 8px 0, transparent 6px, #ffffff 6.5px);
             background-size: 16px 10px;
@@ -74,12 +64,9 @@
 </head>
 <body class="bg-slate-900 min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-    <!-- ===================================================================== -->
-    <!-- BAR KONTROL SIMULASI BIMTEK (SLIM & TOGGLEABLE)                       -->
-    <!-- ===================================================================== -->
+    <!-- BAR KONTROL SIMULASI BIMTEK -->
     <header id="bimtek-bar" class="bg-slate-950 text-slate-200 border-b border-slate-800 px-3 py-2 text-xs z-40">
         <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <!-- Info Pemilih Fiktif -->
             <div class="flex items-center gap-2.5 flex-wrap">
                 <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-bold tracking-wider uppercase text-[10px]">
                     <i class="fa-solid fa-flask mr-1"></i>Mode Bimtek
@@ -94,7 +81,6 @@
                 </span>
             </div>
 
-            <!-- Tombol Kontrol Fasilitator -->
             <div class="flex items-center gap-2">
                 <button onclick="openAuditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded transition flex items-center gap-1.5 font-semibold">
                     <i class="fa-solid fa-box-archive text-amber-400"></i>
@@ -108,27 +94,20 @@
         </div>
     </header>
 
-    <!-- ===================================================================== -->
-    <!-- LAYAR 1: SURAT SUARA UTAMA (SESUAI GAMBAR REFERENSI 1)                -->
-    <!-- ===================================================================== -->
+    <!-- LAYAR 1: SURAT SUARA UTAMA -->
     <main id="screen-ballot" class="flex-1 flex items-center justify-center p-2 sm:p-4 bg-slate-800">
         <div class="w-full max-w-5xl bg-[#E4E5E7] rounded-3xl shadow-2xl border-4 border-slate-300/80 px-4 py-6 sm:px-8 sm:py-8 flex flex-col items-center">
             
-            <!-- Emblem Kabupaten Subang (SVG Perisai Kuning-Hijau) -->
+            <!-- Emblem Kabupaten Subang -->
             <div class="mb-3">
                 <svg class="w-16 h-20 sm:w-20 sm:h-24 drop-shadow" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Perisai Luar -->
                     <path d="M12 14 C12 8, 108 8, 108 14 L108 72 C108 106, 60 132, 60 132 C60 132, 12 106, 12 72 Z" fill="#15803D" stroke="#FACC15" stroke-width="5"/>
-                    <!-- Pita Lengkungan Atas -->
                     <path d="M26 36 Q60 18 94 36" stroke="#FACC15" stroke-width="3" fill="none"/>
                     <text x="60" y="25" text-anchor="middle" fill="#FEF08A" font-size="7" font-weight="800" letter-spacing="0.5">BENTENG PANCASILA</text>
-                    <!-- Bintang Emas -->
                     <polygon points="60,29 62,35 68,35 63,39 65,45 60,41 55,45 57,39 52,35 58,35" fill="#FACC15"/>
-                    <!-- Gunung & Sawah -->
                     <path d="M26 74 L48 52 L62 65 L75 50 L94 74 Z" fill="#166534" stroke="#86EFAC" stroke-width="1.5"/>
                     <rect x="26" y="74" width="68" height="14" rx="2" fill="#0284C7"/>
                     <path d="M26 81 Q43 77 60 81 T94 81" stroke="#E0F2FE" stroke-width="1.5" fill="none"/>
-                    <!-- Pita Bawah -->
                     <path d="M24 96 Q60 116 96 96" stroke="#FACC15" stroke-width="2.5" fill="none"/>
                     <text x="60" y="114" text-anchor="middle" fill="#FEF08A" font-size="6.2" font-weight="800">KARYA UTAMA SATYA NEGARA</text>
                 </svg>
@@ -143,23 +122,19 @@
                 <p class="text-base sm:text-xl md:text-[23px]">TAHUN 2026</p>
             </div>
 
-            <!-- Grid 5 Kandidat (Tanpa Bar Tombol Bawah - Sentuh Langsung Konfirmasi) -->
+            <!-- Grid 5 Kandidat -->
             <div id="candidates-grid" class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
-                <!-- Diisi secara dinamis oleh JavaScript -->
+                <!-- Dirender via JavaScript -->
             </div>
 
-            <!-- Petunjuk Singkat Layar Sentuh -->
             <p class="mt-6 text-xs sm:text-sm font-bold text-slate-600 text-center">
                 <i class="fa-solid fa-hand-pointer mr-1.5 text-slate-700"></i>Sentuh langsung foto atau kotak kandidat pilihan Anda
             </p>
         </div>
     </main>
 
-    <!-- ===================================================================== -->
-    <!-- LAYAR 2: KONFIRMASI PILIHAN (PERSIS GAMBAR REFERENSI 2)                -->
-    <!-- ===================================================================== -->
+    <!-- LAYAR 2: KONFIRMASI PILIHAN -->
     <section id="screen-confirm" class="hidden fixed inset-0 z-50 bg-white flex flex-col justify-between">
-        <!-- Area Atas & Tengah: Foto Kandidat Berlatar Merah Terang -->
         <div class="flex-1 flex flex-col items-center justify-center px-4 py-6">
             <div class="mb-3 text-center">
                 <span class="inline-block bg-slate-100 border border-slate-300 text-slate-700 text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -167,13 +142,10 @@
                 </span>
             </div>
 
-            <!-- Kotak Foto Merah Terang (#F50000) -->
             <div class="w-64 h-72 sm:w-80 sm:h-96 bg-[#F50000] shadow-xl border-2 border-slate-300 overflow-hidden flex items-end justify-center relative">
-                <!-- Badge Nomor Urut -->
-                <div id="confirm-badge" class="absolute top-3 left-3 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white text-black font-black text-2xl sm:text-3xl flex items-center justify-center shadow-md">
+                <div id="confirm-badge" class="absolute top-3 left-3 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white text-black font-black text-2xl sm:text-3xl flex items-center justify-center shadow-md z-10">
                     1
                 </div>
-                <!-- Siluet Formal Jas & Dasi -->
                 <div id="confirm-portrait" class="w-full h-full flex items-end justify-center"></div>
             </div>
 
@@ -182,7 +154,6 @@
             </h2>
         </div>
 
-        <!-- Bar Bawah Penuh Terbagi Dua: ULANGI (Merah) & YAKIN (Biru) -->
         <div class="w-full grid grid-cols-2 h-20 sm:h-24 shrink-0">
             <button onclick="cancelSelection()" class="bg-[#F50000] hover:bg-red-700 active:bg-red-800 transition flex items-center justify-center cursor-pointer border-r border-black/10">
                 <span class="text-stroke-black text-3xl sm:text-5xl font-black tracking-wider uppercase">ULANGI</span>
@@ -193,13 +164,10 @@
         </div>
     </section>
 
-    <!-- ===================================================================== -->
-    <!-- LAYAR 3: STRUK AUDIT BARCODE RAHASIA (PRIVASI PEMILIH TERJAGA)        -->
-    <!-- ===================================================================== -->
+    <!-- LAYAR 3: STRUK AUDIT BARCODE RAHASIA -->
     <section id="screen-receipt" class="hidden flex-1 flex flex-col items-center justify-center p-4 bg-slate-800">
         <div class="max-w-md w-full flex flex-col items-center">
             
-            <!-- Banner Informasi Printer Termal -->
             <div class="w-full bg-emerald-950/90 border border-emerald-700 text-emerald-100 rounded-xl px-4 py-3 mb-4 flex items-center gap-3 shadow-lg">
                 <div class="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0 text-emerald-300">
                     <i class="fa-solid fa-print"></i>
@@ -210,11 +178,9 @@
                 </div>
             </div>
 
-            <!-- Kertas Struk Termal -->
             <div class="w-full max-w-[340px] drop-shadow-2xl animate-receipt">
                 <div class="h-2.5 receipt-edge-top"></div>
                 <div class="bg-white text-slate-900 px-5 py-5 font-mono-receipt">
-                    <!-- Header Struk -->
                     <div class="text-center border-b-2 border-dashed border-slate-400 pb-3 mb-3">
                         <p class="text-xs font-bold tracking-widest text-slate-500">BUKTI AUDIT E-VOTING</p>
                         <h3 class="text-base font-bold leading-tight mt-0.5">PILKADES PURWADADI TIMUR</h3>
@@ -222,7 +188,6 @@
                         <p class="text-xs font-bold mt-1">TPS 001 &bull; TAHUN 2026</p>
                     </div>
 
-                    <!-- Metadata Waktu & Nomor Seri Struk (Tanpa Identitas Pemilih) -->
                     <div class="text-xs space-y-1 border-b border-dashed border-slate-300 pb-3 mb-4">
                         <div class="flex justify-between">
                             <span class="text-slate-500">WAKTU SAH :</span>
@@ -238,13 +203,11 @@
                         </div>
                     </div>
 
-                    <!-- Area Barcode Pilihan Kandidat (Tidak Menampilkan Nama/Nomor Kandidat) -->
                     <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center relative overflow-hidden">
                         <p class="text-[11px] font-bold tracking-wider text-slate-600 uppercase mb-2">
                             <i class="fa-solid fa-shield-halved mr-1"></i>Kode Pilihan Tersandi
                         </p>
 
-                        <!-- SVG Barcode 1D Code-128 Style -->
                         <div id="barcode-wrapper" class="relative bg-white p-2 border border-slate-200 rounded flex flex-col items-center justify-center">
                             <div id="scanner-laser-line" class="hidden scanner-laser"></div>
                             <svg id="receipt-barcode-svg" class="w-full h-20" preserveAspectRatio="none"></svg>
@@ -257,7 +220,6 @@
                             *Nama &amp; nomor urut calon disembunyikan demi asas KERAHASIAAN pemilih.
                         </p>
 
-                        <!-- Kotak Hasil Uji Scan Panitia (Tersembunyi secara default) -->
                         <div id="scanner-result-box" class="hidden mt-3 pt-2.5 border-t border-dashed border-slate-300 text-left bg-amber-50 p-2 rounded border border-amber-200">
                             <div class="flex items-center justify-between text-[10px] font-bold text-amber-800 uppercase">
                                 <span><i class="fa-solid fa-barcode mr-1"></i>Hasil Dekripsi Scanner:</span>
@@ -269,7 +231,6 @@
                         </div>
                     </div>
 
-                    <!-- Footer Struk -->
                     <div class="text-center mt-4 pt-2 border-t-2 border-dashed border-slate-400">
                         <p class="text-[11px] font-bold">LIPAT &amp; MASUKKAN KE KOTAK AUDIT</p>
                         <p class="text-[10px] text-slate-500 mt-0.5">Dilarang membawa pulang struk ini</p>
@@ -278,7 +239,6 @@
                 <div class="h-2.5 receipt-edge-bottom"></div>
             </div>
 
-            <!-- Tombol Aksi Bimtek & Selesai -->
             <div class="w-full max-w-[340px] mt-5 space-y-2.5">
                 <button onclick="simulateBarcodeScan()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-300 border border-slate-600 font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow">
                     <i class="fa-solid fa-qrcode"></i>
@@ -293,9 +253,7 @@
         </div>
     </section>
 
-    <!-- ===================================================================== -->
-    <!-- MODAL KOTAK AUDIT & REKAPITULASI SUARA (UNTUK FASILITATOR BIMTEK)     -->
-    <!-- ===================================================================== -->
+    <!-- MODAL KOTAK AUDIT & REKAPITULASI -->
     <div id="audit-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 text-slate-100 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
@@ -311,7 +269,6 @@
                 </button>
             </div>
 
-            <!-- Ringkasan Total -->
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3">
                     <p class="text-[11px] text-slate-400 uppercase font-bold">Total Struk di Kotak Audit</p>
@@ -323,10 +280,7 @@
                 </div>
             </div>
 
-            <!-- Perolehan Suara Per Kandidat -->
-            <div id="rekap-list" class="space-y-2.5 mb-5">
-                <!-- Diisi dinamis -->
-            </div>
+            <div id="rekap-list" class="space-y-2.5 mb-5"></div>
 
             <div class="flex justify-between items-center gap-2 pt-3 border-t border-slate-800">
                 <button onclick="clearAllVotes()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1">
@@ -339,88 +293,73 @@
         </div>
     </div>
 
-    <!-- Toast Notifikasi Non-Blocking -->
+    <!-- Toast Notifikasi -->
     <div id="toast-notification" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-slate-950 text-white border border-slate-700 px-4 py-2.5 rounded-full shadow-2xl text-xs sm:text-sm font-semibold flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-emerald-400"></i>
         <span id="toast-message">Pesan notifikasi</span>
     </div>
 
     <script>
-        // =====================================================================
-        // DATA KANDIDAT SIMULASI (1 - 5 SILUET FORMAL BERJAS & BERDASI)
-        // =====================================================================
         const candidates = [
-            { id: 1, name: "KANDIDAT 1", code: "K01" },
-            { id: 2, name: "KANDIDAT 2", code: "K02" },
-            { id: 3, name: "KANDIDAT 3", code: "K03" },
-            { id: 4, name: "KANDIDAT 4", code: "K04" },
-            { id: 5, name: "KANDIDAT 5", code: "K05" }
+            { id: 1, name: "KANDIDAT 1", code: "K01", isPhoto: false },
+            { id: 2, name: "ABAD BADRUZAMAN", code: "K02", isPhoto: true, photoSrc: "Abad.jpeg" },
+            { id: 3, name: "KANDIDAT 3", code: "K03", isPhoto: false },
+            { id: 4, name: "KANDIDAT 4", code: "K04", isPhoto: false },
+            { id: 5, name: "KANDIDAT 5", code: "K05", isPhoto: false }
         ];
 
-        // State Aplikasi Simulasi
         let selectedCandidate = null;
         let currentReceiptData = null;
         let hasVotedCurrentSession = false;
-        let auditBoxRecords = []; // Menyimpan log suara masuk ke kotak audit
+        let auditBoxRecords = [];
 
-        // =====================================================================
-        // SVG POTRET SILUET KANDIDAT BERJAS & BERDASI (SESUAI REFERENSI)
-        // =====================================================================
         function getSilhouetteSVG(isConfirmation = false) {
             const sizeClass = isConfirmation ? "w-56 h-64 sm:w-64 sm:h-80" : "w-full h-full";
             return `
                 <svg class="${sizeClass}" viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Jas Hitam Formal -->
                     <path d="M24 230 C24 176, 54 156, 76 150 L100 198 L124 150 C146 156, 176 176, 176 230 Z" fill="#26292E"/>
-                    <!-- Kerah Jas -->
                     <path d="M76 150 L64 178 L84 186 L100 204 L116 186 L136 178 L124 150 L100 198 Z" fill="#181A1D"/>
-                    <!-- Kemeja Putih -->
                     <polygon points="78,148 122,148 100,202" fill="#FFFFFF"/>
-                    <!-- Dasi Gelap -->
                     <polygon points="94,152 106,152 104,163 96,163" fill="#2D3138"/>
                     <polygon points="96,163 104,163 108,195 100,204 92,195" fill="#2D3138"/>
-                    <!-- Leher & Kepala Siluet Putih dengan Outline Gelap -->
                     <path d="M84 128 L84 152 Q100 162 116 152 L116 128 Z" fill="#FFFFFF" stroke="#26292E" stroke-width="3"/>
                     <ellipse cx="100" cy="86" rx="38" ry="48" fill="#FFFFFF" stroke="#26292E" stroke-width="3.5"/>
-                    <!-- Rambut Siluet Hitam -->
                     <path d="M62 82 C60 44, 80 28, 102 28 C126 28, 140 44, 138 82 C136 62, 126 48, 102 48 C78 48, 66 62, 62 82 Z" fill="#26292E"/>
                 </svg>
             `;
         }
 
-        // =====================================================================
-        // RENDER GRID 5 KANDIDAT PADA SURAT SUARA UTAMA
-        // =====================================================================
         function renderCandidates() {
             const grid = document.getElementById('candidates-grid');
-            grid.innerHTML = candidates.map(c => `
-                <button 
-                    onclick="selectCandidate(${c.id})"
-                    class="group flex flex-col items-center focus:outline-none transition-transform duration-150 active:scale-95 cursor-pointer"
-                    aria-label="Pilih ${c.name}"
-                >
-                    <!-- Kotak Foto Kandidat -->
-                    <div class="w-full aspect-[4/5] bg-white group-hover:bg-[#F50000] border-2 border-slate-400/80 group-hover:border-red-700 shadow-md relative overflow-hidden flex items-end justify-center transition-colors duration-150">
-                        <!-- Badge Nomor Urut Lingkaran Putih -->
-                        <div class="absolute top-2 left-2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-300 text-black font-black text-lg sm:text-xl flex items-center justify-center shadow">
-                            ${c.id}
+            grid.innerHTML = candidates.map(c => {
+                let innerVisual = '';
+                if (c.isPhoto) {
+                    // Fallback otomatis jika file Abad.jpeg belum ada/gagal dimuat agar tidak blank
+                    innerVisual = `<img src="${c.photoSrc}" alt="${c.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-[88%] h-[92%] flex items-end justify-center\\'>${getSilhouetteSVG(false).replace(/'/g, "\\'")}</div>`;
+                } else {
+                    innerVisual = `<div class="w-[88%] h-[92%] flex items-end justify-center">${getSilhouetteSVG(false)}</div>`;
+                }
+
+                return `
+                    <button 
+                        onclick="selectCandidate(${c.id})"
+                        class="group flex flex-col items-center focus:outline-none transition-transform duration-150 active:scale-95 cursor-pointer"
+                        aria-label="Pilih ${c.name}"
+                    >
+                        <div class="w-full aspect-[4/5] bg-white group-hover:bg-[#F50000] border-2 border-slate-400/80 group-hover:border-red-700 shadow-md relative overflow-hidden flex items-end justify-center transition-colors duration-150">
+                            <div class="absolute top-2 left-2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-300 text-black font-black text-lg sm:text-xl flex items-center justify-center shadow z-10">
+                                ${c.id}
+                            </div>
+                            ${innerVisual}
                         </div>
-                        <!-- Potret Siluet -->
-                        <div class="w-[88%] h-[92%] flex items-end justify-center">
-                            ${getSilhouetteSVG(false)}
-                        </div>
-                    </div>
-                    <!-- Nama Kandidat di Bawah Kotak -->
-                    <span class="mt-2 text-xs sm:text-sm md:text-base font-extrabold text-[#1E2022] tracking-wide uppercase">
-                        ${c.name}
-                    </span>
-                </button>
-            `).join('');
+                        <span class="mt-2 text-xs sm:text-sm md:text-base font-extrabold text-[#1E2022] tracking-wide uppercase">
+                            ${c.name}
+                        </span>
+                    </button>
+                `;
+            }).join('');
         }
 
-        // =====================================================================
-        // ALUR PEMUNGUTAN SUARA (SENTUH -> KONFIRMASI -> CETAK STRUK BARCODE)
-        // =====================================================================
         function selectCandidate(id) {
             if (hasVotedCurrentSession) {
                 showToast("Token pemilih ini sudah digunakan. Klik 'Reset Simulasi' untuk pemilih berikutnya.");
@@ -430,13 +369,17 @@
             selectedCandidate = candidates.find(c => c.id === id);
             if (!selectedCandidate) return;
 
-            // Isi data layar konfirmasi
             document.getElementById('confirm-number').textContent = selectedCandidate.id;
             document.getElementById('confirm-badge').textContent = selectedCandidate.id;
             document.getElementById('confirm-name').textContent = selectedCandidate.name;
-            document.getElementById('confirm-portrait').innerHTML = getSilhouetteSVG(true);
+            
+            const confirmPortrait = document.getElementById('confirm-portrait');
+            if (selectedCandidate.isPhoto) {
+                confirmPortrait.innerHTML = `<img src="${selectedCandidate.photoSrc}" alt="${selectedCandidate.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-full h-full flex items-end justify-center\\'>${getSilhouetteSVG(true).replace(/'/g, "\\'")}</div>';">`;
+            } else {
+                confirmPortrait.innerHTML = getSilhouetteSVG(true);
+            }
 
-            // Tampilkan layar konfirmasi penuh (ULANGI / YAKIN)
             document.getElementById('screen-confirm').classList.remove('hidden');
         }
 
@@ -451,10 +394,8 @@
             hasVotedCurrentSession = true;
             updateVoterStatusBadge(false);
 
-            // Buat kode token enkripsi acak untuk barcode (menyembunyikan identitas kandidat secara kasat mata)
             const randomSalt = Math.random().toString(36).substring(2, 6).toUpperCase();
             const checkHash = ((selectedCandidate.id * 73 + Math.floor(Math.random() * 89 + 10)) % 99).toString().padStart(2, '0');
-            // Payload barcode tersandi: contoh "EV26-84A9-X72B" (tidak mengandung teks "KANDIDAT 1" secara langsung)
             const cipherPrefix = btoa(`PWT26:${selectedCandidate.code}:${randomSalt}`).replace(/[^A-Z0-9]/gi, '').substring(0, 8).toUpperCase();
             const barcodePayload = `EV26-${cipherPrefix}-${checkHash}`;
 
@@ -470,33 +411,23 @@
                 candidate: selectedCandidate
             };
 
-            // Isi informasi struk audit
             document.getElementById('receipt-time').textContent = timestampStr;
             document.getElementById('receipt-serial').textContent = serialId;
             document.getElementById('receipt-barcode-token').textContent = barcodePayload;
             document.getElementById('scanner-decoded-text').textContent = `SAH → ${selectedCandidate.name} (No. Urut 0${selectedCandidate.id})`;
             
-            // Sembunyikan hasil scanner sebelumnya
             hideScannerResult();
-
-            // Gambar Barcode 1D ke SVG
             renderBarcodeSVG('receipt-barcode-svg', barcodePayload);
 
-            // Pindah dari Layar Konfirmasi ke Layar Struk Audit
             document.getElementById('screen-confirm').classList.add('hidden');
             document.getElementById('screen-ballot').classList.add('hidden');
             document.getElementById('screen-receipt').classList.remove('hidden');
         }
 
-        // =====================================================================
-        // GENERATOR BARCODE 1D (CODE-128 STYLE DETERMINISTIK)
-        // =====================================================================
         function renderBarcodeSVG(svgElementId, textData) {
             const svg = document.getElementById(svgElementId);
-            // Pola start Code-128
             let bars = [2, 1, 1, 2, 1, 4];
 
-            // Konversi tiap karakter menjadi pola batang-spasi yang konsisten dan rapat
             for (let i = 0; i < textData.length; i++) {
                 const code = textData.charCodeAt(i);
                 const w1 = (code % 3) + 1;
@@ -508,7 +439,6 @@
                 bars.push(w1, s1, w2, s2, w3, s3);
             }
 
-            // Pola stop Code-128
             bars.push(2, 3, 3, 1, 1, 1, 2);
 
             const totalUnits = bars.reduce((acc, val) => acc + val, 0);
@@ -518,7 +448,6 @@
             let rectsHTML = '';
 
             bars.forEach((width, index) => {
-                // Indeks genap adalah garis hitam (bar), indeks ganjil adalah spasi putih
                 if (index % 2 === 0) {
                     rectsHTML += `<rect x="${currentX}" y="0" width="${width}" height="60" fill="#0f172a" />`;
                 }
@@ -528,9 +457,6 @@
             svg.innerHTML = rectsHTML;
         }
 
-        // =====================================================================
-        // SIMULASI SCANNER BARCODE AUDIT PANITIA & PENYIMPANAN KE KOTAK AUDIT
-        // =====================================================================
         function simulateBarcodeScan() {
             const laser = document.getElementById('scanner-laser-line');
             const resultBox = document.getElementById('scanner-result-box');
@@ -557,16 +483,12 @@
 
             showToast("Struk berhasil dimasukkan ke Kotak Audit! Simulasi selesai.");
 
-            // Kembali ke layar surat suara untuk kesiapan simulasi berikutnya
             currentReceiptData = null;
             selectedCandidate = null;
             document.getElementById('screen-receipt').classList.add('hidden');
             document.getElementById('screen-ballot').classList.remove('hidden');
         }
 
-        // =====================================================================
-        // KONTROL BIMTEK: RESET SIMULASI & MODAL REKAPITULASI KOTAK AUDIT
-        // =====================================================================
         function resetSimulation() {
             hasVotedCurrentSession = false;
             selectedCandidate = null;
@@ -636,7 +558,6 @@
             }, 3000);
         }
 
-        // Inisialisasi saat halaman dimuat
         window.onload = function() {
             renderCandidates();
         };
