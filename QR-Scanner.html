@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto QR Scanner</title>
+    <title>E-Voting Scanner</title>
     <!-- Memuat pustaka html5-qrcode dari CDN -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
@@ -11,101 +11,184 @@
             margin: 0;
             padding: 0;
             background-color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header Teks Petunjuk */
+        .header-info {
+            background-color: #fff;
+            color: #111;
+            padding: 12px 16px;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-info h2 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .header-info p {
+            margin: 0 0 6px 0;
+            font-size: 12px;
+            color: #555;
+        }
+        .header-info a {
+            font-size: 13px;
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Area Kamera */
+        #scanner-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             overflow: hidden;
-            font-family: sans-serif;
-            color: #fff;
         }
+
         #reader {
-            width: 100%;
-            max-width: 500px;
-            height: 100vh;
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
         }
-        /* Menyembunyikan elemen bawaan pustaka yang tidak diperlukan agar bersih */
-        #reader__dashboard_section_csr button,
-        #reader__dashboard_section_swaplink {
+
+        /* Sembunyikan elemen bawaan html5-qrcode yang tidak diperlukan */
+        #reader video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+        #reader__dashboard, #reader__dashboard_section_csr {
             display: none !important;
         }
-        .loading-text {
+
+        /* Kustomisasi Kotak Target (Viewfinder) agar mirip gambar */
+        .scan-region-highlight-svg {
+            display: none !important; /* Nonaktifkan kotak bawaan */
+        }
+
+        /* Overlay Kustom untuk Teks di dalam Kotak Hitam Transparan */
+        .custom-overlay {
             position: absolute;
-            text-align: center;
-            z-index: 1;
-            font-size: 14px;
-            color: #aaa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             pointer-events: none;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+        
+        .overlay-box {
+            width: 260px;
+            height: 260px;
+            border: 2px solid #28a745; /* Warna hijau khas kotak scanner */
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.4); /* Efek gelap di luar area kotak */
+            position: relative;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .overlay-message {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            max-width: 180px;
+            line-height: 1.4;
+        }
+
+        /* Footer / Tombol Tukar Kamera */
+        .footer-action {
+            position: absolute;
+            bottom: 24px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .btn-switch {
+            background-color: #fff;
+            color: #222;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-status {
+            background-color: #e6f4ea;
+            color: #137333;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
 
-    <div class="loading-text">Menyiapkan kamera...</div>
-    <div id="reader"></div>
+    <!-- Header Petunjuk -->
+    <div class="header-info">
+        <h2>Arahkan kamera ke QR code</h2>
+        <p>Pastikan QR code terlihat jelas dan dapat dibaca</p>
+        <a href="#" onclick="alert('Navigasi / Tutup Pemilihan'); return false;">Tutup pemilihan ?</a>
+    </div>
+
+    <!-- Area Kamera & Kotak Scanner -->
+    <div id="scanner-container">
+        <div id="reader"></div>
+        
+        <!-- Kotak Overlay Visual (Viewfinder & Kotak Hitam Teks) -->
+        <div class="custom-overlay">
+            <div class="overlay-box">
+                <div class="overlay-message">Letakkan QR code di dalam frame</div>
+            </div>
+        </div>
+
+        <!-- Tombol Tukar Kamera (Opsional jika HP punya lebih dari 1 kamera belakang) -->
+        <div class="footer-action" id="switch-container" style="display: none;">
+            <button class="btn-switch" id="btn-change-camera">
+                🔄 Tukar Kamera
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer Status Bawah -->
+    <div class="footer-status">
+        Siap memindai QR undangan pemilih...
+    </div>
 
     <script>
-        // Fungsi yang akan dieksekusi saat QR code berhasil dibaca
+        let html5QrCode;
+        let cameras = [];
+        let currentCameraIndex = 0;
+
         function onScanSuccess(decodedText, decodedResult) {
-            // Hentikan scanner agar tidak memindai ulang secara terus-menerus
-            html5QrCode.stop().then((ignore) => {
-                console.log("Scanner dihentikan.");
-                
-                // LANGSUNG ALIHKAN KE HALAMAN TUJUAN
-                // decodedText berisi string/URL hasil pembacaan QR Code
-                // Anda bisa langsung arahkan ke URL tersebut atau sesuaikan dengan logika aplikasi Anda:
-                window.location.href = decodedText; 
-                
-                // Catatan: Jika isi QR code hanya berupa kode unik (misal ID peserta/voter), 
-                // ubah baris di atas menjadi: window.location.href = "halaman-tujuan.html?id=" + encodeURIComponent(decodedText);
-            }).catch((err) => {
-                console.error("Gagal menghentikan scanner: ", err);
-            });
-        }
-
-        function onScanFailure(error) {
-            // Error kegagalan frame biasa diabaikan agar konsol tidak penuh
-            // karena scanner terus memindai setiap frame video
-        }
-
-        // Inisialisasi scanner pada elemen dengan id 'reader'
-        const html5QrCode = new Html5Qrcode("reader");
-        
-        // Konfigurasi kamera
-        const config = { 
-            fps: 10,, // Jumlah frame per detik untuk pemindaian
-            qrbox: { width: 250, height: 250 } // Kotak area fokus pemindaian di tengah
-        };
-
-        // Langsung mulai kamera belakang secara otomatis tanpa tombol
-        Html5Qrcode.getCameras().devices.then(devices => {
-            if (devices && devices.length) {
-                // Pilih kamera belakang secara otomatis jika tersedia (biasanya index terakhir atau cari yang environment)
-                let cameraId = devices[devices.length - 1].id;
-                
-                // Cari kamera belakang (environment) secara spesifik jika ada
-                for (let i = 0; i < devices.length; i++) {
-                    if (devices[i].label.toLowerCase().includes('back') || devices[i].label.toLowerCase().includes('belakang')) {
-                        cameraId = devices[i].id;
-                        break;
-                    }
-                }
-
-                html5QrCode.start(
-                    cameraId, 
-                    config, 
-                    onScanSuccess, 
-                    onScanFailure
-                ).catch(err => {
-                    console.error("Gagal memulai kamera: ", err);
-                    alert("Gagal mengakses kamera. Pastikan Anda memberikan izin akses kamera.");
-                });
-            } else {
-                alert("Tidak ada kamera yang ditemukan pada perangkat ini.");
-            }
-        }).catch(err => {
-            console.error("Kesalahan saat mendeteksi kamera: ", err);
-        });
-    </script>
-</body>
-</html>
+            // Hentikan kamera segera setelah berhasil dibaca
+            html5QrCode.stop().then(() => {
+                // Langsung arahkan (redirect) ke halaman tujuan sesuai
