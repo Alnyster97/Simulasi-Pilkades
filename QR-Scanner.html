@@ -148,39 +148,66 @@
     </div>
 
     <script>
+        let html5QrCode = null;
+
         function onScanSuccess(decodedText, decodedResult) {
             console.log(`QR Berhasil dibaca: ${decodedText}`);
             
-            // Hentikan scanner lalu alihkan halaman
-            html5QrCode.stop().then(() => {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    window.location.href = decodedText;
+                }).catch(err => {
+                    window.location.href = decodedText;
+                });
+            } else {
                 window.location.href = decodedText;
-            }).catch(err => {
-                window.location.href = decodedText; // Paksa pindah jika gagal stop
-            });
+            }
         }
 
         function onScanFailure(error) {
-            // Abaikan error per frame agar console bersih
+            // Abaikan error per frame agar konsol bersih
         }
 
-        // Inisialisasi Scanner
-        const html5QrCode = new Html5Qrcode("reader");
-        
-        const config = { 
-            fps: 10, 
-            qrbox: { width: 250, height: 250 } 
-        };
+        function initScanner() {
+            // Pastikan elemen #reader sudah ada di DOM
+            const readerElement = document.getElementById("reader");
+            if (!readerElement) return;
 
-        // Langsung panggil kamera belakang (environment) secara otomatis
-        html5QrCode.start(
-            { facingMode: "environment" }, 
-            config, 
-            onScanSuccess, 
-            onScanFailure
-        ).catch(err => {
-            console.error("Gagal membuka kamera:", err);
-            alert("Gagal membuka kamera. Pastikan Anda membuka halaman ini via HTTPS dan memberikan izin akses kamera pada browser.");
-        });
+            html5QrCode = new Html5Qrcode("reader");
+            
+            const config = { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 } 
+            };
+
+            // Berikan jeda milidetik singkat agar elemen render sempurna sebelum kamera dipanggil
+            setTimeout(() => {
+                html5QrCode.start(
+                    { facingMode: "environment" }, 
+                    config, 
+                    onScanSuccess, 
+                    onScanFailure
+                ).catch(err => {
+                    console.warn("Percobaan pertama kamera gagal, mencoba inisialisasi ulang...", err);
+                    
+                    // Fallback otomatis: Coba bersihkan instance lalu jalankan ulang sekali lagi jika gagal di awal
+                    setTimeout(() => {
+                        html5QrCode.start(
+                            { facingMode: "user" }, // Mencoba kamera depan jika kamera belakang terkunci aplikasi lain, atau tetap environment
+                            config, 
+                            onScanSuccess, 
+                            onScanFailure
+                        ).catch(retryErr => {
+                            console.error("Gagal total membuka kamera:", retryErr);
+                            alert("Gagal membuka kamera. Pastikan tidak ada aplikasi lain yang sedang menggunakan kamera.");
+                        });
+                    }, 500);
+                });
+            }, 300);
+        }
+
+        // Jalankan saat dokumen selesai dimuat sepenuhnya
+        document.addEventListener("DOMContentLoaded", initScanner);
     </script>
 </body>
 </html>
