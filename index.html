@@ -75,8 +75,7 @@ body{font-family:Inter,sans-serif;user-select:none;-webkit-tap-highlight-color:t
   <div id="ballot-heading" class="text-center text-[#1E2022] font-extrabold tracking-tight leading-snug mb-6 sm:mb-8">
    <h1 class="text-lg sm:text-2xl md:text-[26px]">SURAT SUARA</h1>
    <h2 class="text-base sm:text-xl md:text-[23px]">PEMILIHAN KEPALA DESA PURWADADI</h2>
-   <h3 class="text-base sm:text-xl md:text-[23px]">KECAMATAN PURWADADI</h3>
-   <h3 class="text-base sm:text-xl md:text-[23px]">KABUPATEN SUBANG</h3>
+   <h3 class="text-base sm:text-xl md:text-[23px]">KECAMATAN PURWADADI KABUPATEN SUBANG</h3>
    <p class="text-base sm:text-xl md:text-[23px]">TAHUN 2026</p>
   </div>
   <div id="candidates-grid" class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4"></div>
@@ -110,7 +109,7 @@ body{font-family:Inter,sans-serif;user-select:none;-webkit-tap-highlight-color:t
    <div class="bg-white text-slate-900 px-5 py-5 font-mono-receipt">
     <div class="text-center border-b-2 border-dashed border-slate-400 pb-3 mb-3">
      <p class="text-xs font-bold tracking-widest text-slate-500">BUKTI AUDIT SIMULASI</p>
-     <h3 class="text-base font-bold leading-tight mt-0.5">PILKADES PURWADADI TIMUR</h3>
+     <h3 class="text-base font-bold leading-tight mt-0.5">PILKADES PURWADADI</h3>
      <p class="text-xs text-slate-600">KEC. PURWADADI - KAB. SUBANG</p><p class="text-xs font-bold mt-1">TPS DEMO &bull; TAHUN 2026</p>
     </div>
     <div class="text-xs space-y-1 border-b border-dashed border-slate-300 pb-3 mb-4">
@@ -171,7 +170,7 @@ function getSilhouetteSVG(isConfirmation=false){
 function renderCandidates(){
  const grid=document.getElementById('candidates-grid');
  grid.innerHTML=candidates.map(c=>{
-  let visual=c.isPhoto?`<img src="${c.photoSrc}" alt="${c.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-[88%] h-[92%] flex items-end justify-center\\'>${getSilhouetteSVG(false).replace(/'/g,"\\'")}</div>';">`:`<div class="w-[88%] h-[92%] flex items-end justify-center">${getSilhouetteSVG(false)}</div>`;
+  let visual=c.isPhoto?`<img src="${c.photoSrc}" alt="${c.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-[88%] h-[92%] flex items-end justify-center\\'>${getSilhouetteSVG(false).replace(/'/g,"\\'")}</div>`:`<div class="w-[88%] h-[92%] flex items-end justify-center">${getSilhouetteSVG(false)}</div>`;
   return `<button onclick="selectCandidate(${c.id})" class="group flex flex-col items-center focus:outline-none transition-transform duration-150 active:scale-95 cursor-pointer" aria-label="Pilih ${c.name}"><div class="candidate-card w-full aspect-[4/5] bg-white group-hover:bg-[#F50000] border-2 border-slate-400/80 group-hover:border-red-700 shadow-md relative overflow-hidden flex items-end justify-center transition-colors duration-150"><div class="absolute top-2 left-2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-300 text-black font-black text-lg sm:text-xl flex items-center justify-center shadow z-10">${c.id}</div>${visual}</div><span class="candidate-name mt-2 text-xs sm:text-sm md:text-base font-extrabold text-[#1E2022] tracking-wide uppercase">${c.name}</span></button>`;
  }).join('');
 }
@@ -182,7 +181,7 @@ function selectCandidate(id){
  document.getElementById('confirm-badge').textContent=selectedCandidate.id;
  document.getElementById('confirm-name').textContent=selectedCandidate.name;
  const portrait=document.getElementById('confirm-portrait');
- portrait.innerHTML=selectedCandidate.isPhoto?`<img src="${selectedCandidate.photoSrc}" alt="${selectedCandidate.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-full h-full flex items-end justify-center\\'>${getSilhouetteSVG(true).replace(/'/g,"\\'")}</div>';">`:getSilhouetteSVG(true);
+ portrait.innerHTML=selectedCandidate.isPhoto?`<img src="${selectedCandidate.photoSrc}" alt="${selectedCandidate.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-full h-full flex items-end justify-center\\'>${getSilhouetteSVG(true).replace(/'/g,"\\'")}</div>`:getSilhouetteSVG(true);
  document.getElementById('screen-confirm').classList.remove('hidden');
 }
 function cancelSelection(){selectedCandidate=null;document.getElementById('screen-confirm').classList.add('hidden')}
