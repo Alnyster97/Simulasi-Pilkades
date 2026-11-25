@@ -1,252 +1,668 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Surat Suara E-Voting Pilkades Purwadadi 2026 — Simulasi</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-body{font-family:Inter,sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
-.font-mono-receipt{font-family:'Share Tech Mono',monospace}
-.text-stroke-black{color:#fff;-webkit-text-stroke:2px #000;paint-order:stroke fill;text-shadow:0 2px 4px rgba(0,0,0,.35)}
-@media(max-width:640px){.text-stroke-black{-webkit-text-stroke:1.5px #000}}
-@keyframes printSlideDown{0%{transform:translateY(-24px);opacity:0}100%{transform:translateY(0);opacity:1}}
-.animate-receipt{animation:printSlideDown .55s cubic-bezier(.22,1,.36,1) forwards}
-@keyframes scanLaser{0%,100%{top:10%}50%{top:85%}}
-.scanner-laser{position:absolute;left:0;right:0;height:2px;background:#ef4444;box-shadow:0 0 8px #ef4444,0 0 12px #dc2626;animation:scanLaser 1.2s ease-in-out infinite}
-.receipt-edge-top{background-image:radial-gradient(circle at 8px 0,transparent 6px,#fff 6.5px);background-size:16px 10px;background-repeat:repeat-x}
-.receipt-edge-bottom{background-image:radial-gradient(circle at 8px 10px,transparent 6px,#fff 6.5px);background-size:16px 10px;background-repeat:repeat-x}
-@media(orientation:landscape) and (min-width:768px){
- #bimtek-bar{display:none!important}
- #screen-ballot{padding:8px!important}
- #ballot-panel{max-width:100%!important;padding:12px 20px!important;border-width:3px!important;border-radius:20px!important}
- #emblem svg{width:48px!important;height:56px!important}
- #ballot-heading{margin-bottom:12px!important;line-height:1.2!important}
- #ballot-heading h1{font-size:20px!important}
- #ballot-heading h2,#ballot-heading h3,#ballot-heading p{font-size:17px!important}
- #candidates-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important}
- #candidates-grid button .candidate-card{aspect-ratio:4/5!important;max-height:48vh}
- #candidates-grid button .candidate-name{font-size:clamp(12px,1.5vw,18px)!important;text-align:center;line-height:1.2}
- #ballot-hint{margin-top:10px!important}
- #screen-confirm{flex-direction:row!important;align-items:stretch!important}
- #screen-confirm .confirm-content{flex:1!important;padding:12px!important}
- #screen-confirm .confirm-actions{width:180px!important;height:100%!important;grid-template-columns:1fr!important}
- #screen-confirm .confirm-actions button{min-height:50%!important}
- #screen-confirm #confirm-portrait{max-height:70vh}
- #screen-receipt{padding:8px!important;overflow-y:auto}
- #receipt-layout{max-width:900px!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(300px,340px)!important;align-items:center!important;gap:16px!important}
- #receipt-notice{grid-column:1/-1;margin-bottom:0!important}
- #receipt-paper,#receipt-actions{max-width:100%!important}
- #audit-modal-panel{max-height:90vh;overflow-y:auto}
+<!DOCTYPE html>  <html lang="id">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+<title>Surat Suara E-Voting Pilkades Purwadadi 2026 — Simulasi</title>  
+<script src="https://cdn.tailwindcss.com"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>  
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+<style>  
+  body {  
+    font-family: Inter, sans-serif;  
+    user-select: none;  
+    -webkit-tap-highlight-color: transparent;  
+    min-height: 100dvh;  
+  }  
+  .font-mono-receipt { font-family: 'Share Tech Mono', monospace; }  
+  .text-stroke-black {  
+    color: #fff;  
+    -webkit-text-stroke: 2px #000;  
+    paint-order: stroke fill;  
+    text-shadow: 0 2px 4px rgba(0, 0, 0, .35);  
+  }  
+  @media (max-width: 640px) { .text-stroke-black { -webkit-text-stroke: 1.5px #000; } }  
+  @keyframes printSlideDown {  
+    0% { transform: translateY(-24px); opacity: 0; }  
+    100% { transform: translateY(0); opacity: 1; }  
+  }  
+  .animate-receipt { animation: printSlideDown .55s cubic-bezier(.22, 1, .36, 1) forwards; }  
+  .receipt-edge-top {  
+    background-image: radial-gradient(circle at 8px 0, transparent 6px, #fff 6.5px);  
+    background-size: 16px 10px; background-repeat: repeat-x;  
+  }  
+  .receipt-edge-bottom {  
+    background-image: radial-gradient(circle at 8px 10px, transparent 6px, #fff 6.5px);  
+    background-size: 16px 10px; background-repeat: repeat-x;  
+  }  /* =====================================================================
+OPTIMASI LANDSCAPE UNTUK TABLET & SMARTPHONE (SEMUA LEBAR LAYAR)
+===================================================================== /
+@media (orientation: landscape) {
+/ 1. Layar Surat Suara Utama: Satu layar penuh tanpa scroll */
+#screen-ballot {
+height: 100dvh !important;
+padding: clamp(4px, 1dvh, 10px) clamp(8px, 1.5vw, 20px) !important;
+overflow: hidden !important;
 }
-@media(orientation:landscape) and (min-width:768px) and (max-height:650px){
- #emblem{margin-bottom:4px!important}
- #ballot-heading{margin-bottom:8px!important}
- #candidates-grid{gap:8px!important}
- #candidates-grid button .candidate-card{max-height:42vh!important}
- #ballot-hint{margin-top:6px!important}
+#ballot-panel {
+max-width: 100% !important;
+height: 100% !important;
+padding: clamp(6px, 1.2dvh, 14px) clamp(12px, 2vw, 24px) !important;
+border-width: 3px !important;
+border-radius: 18px !important;
+display: flex !important;
+flex-direction: column !important;
+justify-content: space-between !important;
+}
+
+/* Header Surat Suara: Logo & Judul berdampingan jika layar pendek */  
+#ballot-header {  
+  display: flex !important;  
+  flex-direction: row !important;  
+  align-items: center !important;  
+  justify-content: center !important;  
+  gap: clamp(10px, 2vw, 18px) !important;  
+  margin-bottom: clamp(4px, 0.8dvh, 10px) !important;  
+  flex-shrink: 0;  
+}  
+#emblem { margin-bottom: 0 !important; flex-shrink: 0; }  
+#emblem svg {  
+  width: clamp(34px, 5.8dvh, 60px) !important;  
+  height: clamp(40px, 6.8dvh, 72px) !important;  
+}  
+#ballot-heading {  
+  margin-bottom: 0 !important;  
+  text-align: left !important;  
+  line-height: 1.15 !important;  
+}  
+#ballot-heading h1 { font-size: clamp(12px, 2.2dvh, 21px) !important; }  
+#ballot-heading h2,  
+#ballot-heading h3,  
+#ballot-heading p { font-size: clamp(10px, 1.8dvh, 17px) !important; }  
+
+/* Grid 5 Kandidat Sejajar Horizontal */  
+#candidates-grid {  
+  flex: 1 !important;  
+  min-height: 0 !important;  
+  display: grid !important;  
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;  
+  gap: clamp(6px, 1.2vw, 16px) !important;  
+  align-items: stretch !important;  
+}  
+#candidates-grid button {  
+  height: 100% !important;  
+  min-height: 0 !important;  
+  display: flex !important;  
+  flex-direction: column !important;  
+  justify-content: center !important;  
+}  
+#candidates-grid button .candidate-card {  
+  width: 100% !important;  
+  flex: 1 !important;  
+  min-height: 0 !important;  
+  aspect-ratio: auto !important;  
+  max-height: 48dvh !important;  
+}  
+#candidates-grid button .candidate-badge {  
+  width: clamp(22px, 3.8dvh, 38px) !important;  
+  height: clamp(22px, 3.8dvh, 38px) !important;  
+  font-size: clamp(12px, 2dvh, 19px) !important;  
+  top: 6px !important;  
+  left: 6px !important;  
+}  
+#candidates-grid button .candidate-name {  
+  margin-top: clamp(3px, 0.6dvh, 6px) !important;  
+  font-size: clamp(10px, 1.4vw, 15px) !important;  
+  line-height: 1.15 !important;  
+  white-space: nowrap !important;  
+  overflow: hidden !important;  
+  text-overflow: ellipsis !important;  
+  width: 100% !important;  
+  text-align: center !important;  
+}  
+
+/* Bar Bawah "PILIH KANDIDAT INI" pada Landscape */  
+#select-bar-wrapper {  
+  margin-top: clamp(6px, 1dvh, 12px) !important;  
+  flex-shrink: 0 !important;  
+}  
+#btn-select-candidate {  
+  height: clamp(42px, 8.5dvh, 62px) !important;  
+  font-size: clamp(15px, 2.8dvh, 24px) !important;  
+  border-radius: 12px !important;  
+}  
+
+/* 2. Layar Konfirmasi: Kiri Foto Kandidat, Kanan Tombol ULANGI & YAKIN */  
+#screen-confirm {  
+  flex-direction: row !important;  
+  align-items: stretch !important;  
+  height: 100dvh !important;  
+}  
+#screen-confirm .confirm-content {  
+  flex: 1 !important;  
+  height: 100% !important;  
+  padding: clamp(8px, 2dvh, 20px) !important;  
+  justify-content: center !important;  
+}  
+#screen-confirm .confirm-label {  
+  margin-bottom: clamp(6px, 1.2dvh, 14px) !important;  
+  font-size: clamp(11px, 1.8dvh, 14px) !important;  
+  padding: 4px 12px !important;  
+}  
+#screen-confirm .confirm-card-box {  
+  width: auto !important;  
+  height: clamp(170px, 56dvh, 380px) !important;  
+  aspect-ratio: 4 / 5 !important;  
+}  
+#screen-confirm #confirm-badge {  
+  width: clamp(32px, 5.5dvh, 54px) !important;  
+  height: clamp(32px, 5.5dvh, 54px) !important;  
+  font-size: clamp(18px, 3dvh, 28px) !important;  
+}  
+#screen-confirm #confirm-name {  
+  margin-top: clamp(6px, 1.4dvh, 16px) !important;  
+  font-size: clamp(18px, 3.6dvh, 32px) !important;  
+}  
+#screen-confirm .confirm-actions {  
+  width: clamp(150px, 26vw, 240px) !important;  
+  height: 100% !important;  
+  grid-template-columns: 1fr !important;  
+  grid-template-rows: 1fr 1fr !important;  
+}  
+#screen-confirm .confirm-actions button {  
+  border-right: none !important;  
+  border-bottom: 2px solid rgba(0, 0, 0, 0.15) !important;  
+}  
+#screen-confirm .confirm-actions span {  
+  font-size: clamp(22px, 4.2vw, 44px) !important;  
+}  
+
+/* 3. Layar Struk Audit: Dua Kolom Sejajar */  
+#screen-receipt {  
+  height: 100dvh !important;  
+  padding: clamp(8px, 1.5dvh, 16px) !important;  
+  overflow-y: auto !important;  
+  justify-content: center !important;  
+}  
+#receipt-layout {  
+  max-width: 860px !important;  
+  width: 100% !important;  
+  display: grid !important;  
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr) !important;  
+  align-items: center !important;  
+  gap: clamp(12px, 2.5vw, 24px) !important;  
+}  
+#receipt-paper {  
+  grid-row: 1 / 3 !important;  
+  max-width: 100% !important;  
+}  
+#receipt-paper .receipt-body {  
+  padding: clamp(10px, 2dvh, 18px) !important;  
+}  
+#receipt-qrcode img,  
+#receipt-qrcode canvas {  
+  width: clamp(110px, 24dvh, 170px) !important;  
+  height: clamp(110px, 24dvh, 170px) !important;  
+}  
+#receipt-notice {  
+  margin-bottom: 0 !important;  
+  align-self: end !important;  
+}  
+#receipt-actions {  
+  max-width: 100% !important;  
+  margin-top: 0 !important;  
+  align-self: start !important;  
+}  
+
+/* 4. Modal Rekapitulasi */  
+#audit-modal-panel {  
+  max-height: 92dvh !important;  
+  overflow-y: auto !important;  
+  padding: 16px !important;  
+}
+
+}
+
+/* Tablet Landscape Lebar (>= 1024px) */
+@media (orientation: landscape) and (min-width: 1024px) and (min-height: 680px) {
+#ballot-header {
+flex-direction: column !important;
+gap: 6px !important;
+}
+#ballot-heading {
+text-align: center !important;
+}
+}
+
+/* =====================================================================
+STYLING KHUSUS CETAK PRINTER THERMAL (58mm / 80mm)
+===================================================================== /
+@media print {
+@page {
+size: 58mm auto;
+margin: 0mm;
+}
+html, body {
+background: #ffffff !important;
+color: #000000 !important;
+margin: 0 !important;
+padding: 0 !important;
+min-height: auto !important;
+height: auto !important;
+width: 58mm !important;
+overflow: visible !important;
+}
+/ Sembunyikan semua elemen UI selain kertas struk */
+#bimtek-bar,
+#screen-ballot,
+#screen-confirm,
+#receipt-notice,
+#receipt-actions,
+#audit-modal,
+#toast-notification,
+.receipt-edge-top,
+.receipt-edge-bottom {
+display: none !important;
+}
+#screen-receipt {
+display: block !important;
+background: #ffffff !important;
+padding: 0 !important;
+margin: 0 !important;
+height: auto !important;
+width: 100% !important;
+}
+#receipt-layout {
+display: block !important;
+max-width: 100% !important;
+width: 100% !important;
+margin: 0 !important;
+padding: 0 !important;
+}
+#receipt-paper {
+width: 100% !important;
+max-width: 100% !important;
+box-shadow: none !important;
+filter: none !important;
+animation: none !important;
+margin: 0 !important;
+padding: 0 !important;
+}
+#receipt-paper .receipt-body {
+padding: 3mm 2.5mm 6mm 2.5mm !important;
+color: #000000 !important;
+background: #ffffff !important;
+}
+#receipt-paper * {
+color: #000000 !important;
+border-color: #000000 !important;
+}
+#qr-wrapper {
+border: none !important;
+padding: 1mm 0 !important;
+}
+#receipt-qrcode img,
+#receipt-qrcode canvas {
+width: 34mm !important;
+height: 34mm !important;
+margin: 0 auto !important;
+}
 }
 </style>
-</head>
-<body class="bg-slate-900 min-h-screen flex flex-col overflow-x-hidden">
-<!-- Kontrol demo tidak ditampilkan di layar pemilih; tombol admin tersedia melalui shortcut demo yang terdokumentasi di bawah. -->
-<header id="bimtek-bar" class="hidden">
-<button onclick="openAuditModal()">Audit</button><button onclick="resetSimulation()">Reset</button>
-</header>
 
-<main id="screen-ballot" class="flex-1 flex items-center justify-center p-2 sm:p-4 bg-slate-800">
- <div id="ballot-panel" class="w-full max-w-5xl bg-[#E4E5E7] rounded-3xl shadow-2xl border-4 border-slate-300/80 px-4 py-6 sm:px-8 sm:py-8 flex flex-col items-center">
-  <div id="emblem" class="mb-3">
-   <svg class="w-16 h-20 sm:w-20 sm:h-24 drop-shadow" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 14 C12 8, 108 8, 108 14 L108 72 C108 106, 60 132, 60 132 C60 132, 12 106, 12 72 Z" fill="#15803D" stroke="#FACC15" stroke-width="5"/>
-    <path d="M26 36 Q60 18 94 36" stroke="#FACC15" stroke-width="3" fill="none"/>
-    <text x="60" y="25" text-anchor="middle" fill="#FEF08A" font-size="7" font-weight="800" letter-spacing=".5">BENTENG PANCASILA</text>
-    <polygon points="60,29 62,35 68,35 63,39 65,45 60,41 55,45 57,39 52,35 58,35" fill="#FACC15"/>
-    <path d="M26 74 L48 52 L62 65 L75 50 L94 74 Z" fill="#166534" stroke="#86EFAC" stroke-width="1.5"/>
-    <rect x="26" y="74" width="68" height="14" rx="2" fill="#0284C7"/>
-    <path d="M26 81 Q43 77 60 81 T94 81" stroke="#E0F2FE" stroke-width="1.5" fill="none"/>
-    <path d="M24 96 Q60 116 96 96" stroke="#FACC15" stroke-width="2.5" fill="none"/>
-    <text x="60" y="114" text-anchor="middle" fill="#FEF08A" font-size="6.2" font-weight="800">KARYA UTAMA SATYA NEGARA</text>
-   </svg>
-  </div>
-  <div id="ballot-heading" class="text-center text-[#1E2022] font-extrabold tracking-tight leading-snug mb-6 sm:mb-8">
-   <h1 class="text-lg sm:text-2xl md:text-[26px]">SURAT SUARA</h1>
-   <h2 class="text-base sm:text-xl md:text-[23px]">PEMILIHAN KEPALA DESA PURWADADI</h2>
-   <h3 class="text-base sm:text-xl md:text-[23px]">KECAMATAN PURWADADI KABUPATEN SUBANG</h3>
-   <p class="text-base sm:text-xl md:text-[23px]">TAHUN 2026</p>
-  </div>
-  <div id="candidates-grid" class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4"></div>
-  <p id="ballot-hint" class="mt-6 text-xs sm:text-sm font-bold text-slate-600 text-center"><i class="fa-solid fa-hand-pointer mr-1.5 text-slate-700"></i>Sentuh langsung foto atau kotak kandidat pilihan Anda</p>
- </div>
-</main>
+</head>  
+<body class="bg-slate-900 min-h-screen flex flex-col overflow-x-hidden">  <header id="bimtek-bar" class="hidden">  
+  <button onclick="openAuditModal()">Audit</button>  
+  <button onclick="resetSimulation()">Reset</button>  
+</header>  <main id="screen-ballot" class="flex-1 flex items-center justify-center p-2 sm:p-4 bg-slate-800">  
+  <div id="ballot-panel" class="w-full max-w-5xl bg-[#E4E5E7] rounded-3xl shadow-2xl border-4 border-slate-300/80 px-4 py-5 sm:px-8 sm:py-7 flex flex-col items-center">  
+    <div id="ballot-header" class="flex flex-col items-center">  
+      <div id="emblem" class="mb-2.5 cursor-pointer" title="Tahan 2 detik untuk Menu Admin Simulasi">  
+        <svg class="w-16 h-20 sm:w-20 sm:h-24 drop-shadow" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">  
+          <path d="M12 14 C12 8, 108 8, 108 14 L108 72 C108 106, 60 132, 60 132 C60 132, 12 106, 12 72 Z" fill="#15803D" stroke="#FACC15" stroke-width="5"/>  
+          <path d="M26 36 Q60 18 94 36" stroke="#FACC15" stroke-width="3" fill="none"/>  
+          <text x="60" y="25" text-anchor="middle" fill="#FEF08A" font-size="7" font-weight="800" letter-spacing=".5">BENTENG PANCASILA</text>  
+          <polygon points="60,29 62,35 68,35 63,39 65,45 60,41 55,45 57,39 52,35 58,35" fill="#FACC15"/>  
+          <path d="M26 74 L48 52 L62 65 L75 50 L94 74 Z" fill="#166534" stroke="#86EFAC" stroke-width="1.5"/>  
+          <rect x="26" y="74" width="68" height="14" rx="2" fill="#0284C7"/>  
+          <path d="M26 81 Q43 77 60 81 T94 81" stroke="#E0F2FE" stroke-width="1.5" fill="none"/>  
+          <path d="M24 96 Q60 116 96 96" stroke="#FACC15" stroke-width="2.5" fill="none"/>  
+          <text x="60" y="114" text-anchor="middle" fill="#FEF08A" font-size="6.2" font-weight="800">KARYA UTAMA SATYA NEGARA</text>  
+        </svg>  
+      </div>  
+      <div id="ballot-heading" class="text-center text-[#1E2022] font-extrabold tracking-tight leading-snug mb-5 sm:mb-7">  
+        <h1 class="text-lg sm:text-2xl md:text-[26px]">SURAT SUARA</h1>  
+        <h2 class="text-base sm:text-xl md:text-[23px]">PEMILIHAN KEPALA DESA PURWADADI</h2>  
+        <h3 class="text-base sm:text-xl md:text-[23px]">KECAMATAN PURWADADI KABUPATEN SUBANG</h3>  
+        <p class="text-base sm:text-xl md:text-[23px]">TAHUN 2026</p>  
+      </div>  
+    </div>  <div id="candidates-grid" class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4"></div>  
 
-<section id="screen-confirm" class="hidden fixed inset-0 z-50 bg-white flex flex-col justify-between">
- <div class="confirm-content flex-1 flex flex-col items-center justify-center px-4 py-6">
-  <div class="mb-3 text-center"><span class="inline-block bg-slate-100 border border-slate-300 text-slate-700 text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Konfirmasi Pilihan Anda &bull; Nomor Urut <span id="confirm-number">1</span></span></div>
-  <div class="w-64 h-72 sm:w-80 sm:h-96 bg-[#F50000] shadow-xl border-2 border-slate-300 overflow-hidden flex items-end justify-center relative">
-   <div id="confirm-badge" class="absolute top-3 left-3 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white text-black font-black text-2xl sm:text-3xl flex items-center justify-center shadow-md z-10">1</div>
-   <div id="confirm-portrait" class="w-full h-full flex items-end justify-center"></div>
-  </div>
-  <h2 id="confirm-name" class="mt-4 text-2xl sm:text-3xl font-black text-slate-900 tracking-wide uppercase">KANDIDAT 1</h2>
- </div>
- <div class="confirm-actions w-full grid grid-cols-2 h-20 sm:h-24 shrink-0">
-  <button onclick="cancelSelection()" class="bg-[#F50000] hover:bg-red-700 active:bg-red-800 transition flex items-center justify-center cursor-pointer border-r border-black/10"><span class="text-stroke-black text-3xl sm:text-5xl font-black tracking-wider uppercase">ULANGI</span></button>
-  <button onclick="confirmVote()" class="bg-[#1592E6] hover:bg-sky-600 active:bg-sky-700 transition flex items-center justify-center cursor-pointer"><span class="text-stroke-black text-3xl sm:text-5xl font-black tracking-wider uppercase">YAKIN</span></button>
- </div>
-</section>
-
-<section id="screen-receipt" class="hidden flex-1 flex flex-col items-center justify-center p-4 bg-slate-800">
- <div id="receipt-layout" class="max-w-md w-full flex flex-col items-center">
-  <div id="receipt-notice" class="w-full bg-emerald-950/90 border border-emerald-700 text-emerald-100 rounded-xl px-4 py-3 mb-4 flex items-center gap-3 shadow-lg">
-   <div class="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0 text-emerald-300"><i class="fa-solid fa-print"></i></div>
-   <div class="text-xs leading-relaxed"><p class="font-bold text-emerald-300 uppercase tracking-wide">Simulasi Selesai &amp; Struk Audit</p><p class="text-emerald-100/90">QR berisi token demo acak, bukan identitas pemilih atau pilihan kandidat.</p></div>
-  </div>
-  <div id="receipt-paper" class="w-full max-w-[340px] drop-shadow-2xl animate-receipt">
-   <div class="h-2.5 receipt-edge-top"></div>
-   <div class="bg-white text-slate-900 px-5 py-5 font-mono-receipt">
-    <div class="text-center border-b-2 border-dashed border-slate-400 pb-3 mb-3">
-     <p class="text-xs font-bold tracking-widest text-slate-500">BUKTI AUDIT SIMULASI</p>
-     <h3 class="text-base font-bold leading-tight mt-0.5">PILKADES PURWADADI</h3>
-     <p class="text-xs text-slate-600">KEC. PURWADADI - KAB. SUBANG</p><p class="text-xs font-bold mt-1">TPS DEMO &bull; TAHUN 2026</p>
-    </div>
-    <div class="text-xs space-y-1 border-b border-dashed border-slate-300 pb-3 mb-4">
-     <div class="flex justify-between gap-2"><span class="text-slate-500">WAKTU :</span><span id="receipt-time" class="font-bold text-right">--/--/2026 --:--:--</span></div>
-     <div class="flex justify-between gap-2"><span class="text-slate-500">NO. AUDIT :</span><span id="receipt-serial" class="font-bold">DEMO-0000</span></div>
-     <div class="flex justify-between gap-2"><span class="text-slate-500">STATUS :</span><span class="font-bold">TOKEN DEMO</span></div>
-    </div>
-    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center relative overflow-hidden">
-     <p class="text-[11px] font-bold tracking-wider text-slate-600 uppercase mb-2"><i class="fa-solid fa-shield-halved mr-1"></i>Token Audit Simulasi</p>
-     <div id="qr-wrapper" class="relative bg-white p-2 border border-slate-200 rounded flex flex-col items-center justify-center">
-      <div id="scanner-laser-line" class="hidden scanner-laser"></div>
-      <div id="receipt-qrcode" class="flex items-center justify-center bg-white p-2"></div>
-      <p id="receipt-token" class="text-[11px] tracking-wider font-bold text-slate-800 mt-2 text-center break-all">DEMO-XXXX-XXXX</p>
-     </div>
-     <p class="text-[10px] text-slate-500 mt-2 leading-tight">Kode ini hanya untuk demonstrasi dan tidak membuktikan suara yang sah.</p>
-     <div id="scanner-result-box" class="hidden mt-3 pt-2.5 border-t border-dashed border-slate-300 text-left bg-amber-50 p-2 rounded border border-amber-200">
-      <div class="flex items-center justify-between text-[10px] font-bold text-amber-800 uppercase"><span><i class="fa-solid fa-qrcode mr-1"></i>Hasil Pemeriksaan Token</span><button onclick="hideScannerResult()" class="text-amber-700 hover:text-amber-950 underline">Tutup</button></div>
-      <p id="scanner-decoded-text" class="text-xs font-bold text-slate-900 mt-1">TOKEN DEMO</p>
-     </div>
-    </div>
-    <div class="text-center mt-4 pt-2 border-t-2 border-dashed border-slate-400"><p class="text-[11px] font-bold">MASUKKAN STRUK KE KOTAK AUDIT DEMO</p><p class="text-[10px] text-slate-500 mt-0.5">Tidak untuk penggunaan pemilihan nyata</p></div>
-   </div>
-   <div class="h-2.5 receipt-edge-bottom"></div>
-  </div>
-  <div id="receipt-actions" class="w-full max-w-[340px] mt-5 space-y-2.5">
-   <button onclick="simulateBarcodeScan()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-300 border border-slate-600 font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow"><i class="fa-solid fa-qrcode"></i><span>Uji Pindai QR (Simulasi)</span></button>
-   <button onclick="depositToAuditBox()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm sm:text-base transition flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-box-archive"></i><span>Selesaikan Simulasi &amp; Kembali</span></button>
-  </div>
- </div>
-</section>
-
-<div id="audit-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
- <div id="audit-modal-panel" class="bg-slate-900 border border-slate-700 text-slate-100 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl">
-  <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4"><div><h3 class="text-base sm:text-lg font-extrabold text-white flex items-center gap-2"><i class="fa-solid fa-chart-column text-amber-400"></i><span>Rekapitulasi Simulasi</span></h3><p class="text-xs text-slate-400">Data demo lokal dalam memori browser</p></div><button onclick="closeAuditModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
-  <div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3"><p class="text-[11px] text-slate-400 uppercase font-bold">Total Simulasi</p><p id="modal-total-ballots" class="text-2xl font-black text-emerald-400 mt-0.5">0</p></div><div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3"><p class="text-[11px] text-slate-400 uppercase font-bold">Mode</p><p class="text-sm font-bold text-sky-300 mt-1.5"><i class="fa-solid fa-circle-info mr-1"></i>Demo saja</p></div></div>
-  <div id="rekap-list" class="space-y-2.5 mb-5"></div>
-  <div class="flex justify-between items-center gap-2 pt-3 border-t border-slate-800"><button onclick="clearAllVotes()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1"><i class="fa-solid fa-trash-can mr-1"></i>Kosongkan Data Demo</button><button onclick="closeAuditModal()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl">Tutup</button></div>
- </div>
+<!-- Bar Bawah Biru "PILIH KANDIDAT INI" -->  
+<div id="select-bar-wrapper" class="w-full mt-5 sm:mt-6">  
+  <button  
+    id="btn-select-candidate"  
+    onclick="proceedToConfirm()"  
+    disabled  
+    class="w-full h-14 sm:h-16 rounded-2xl font-black text-base sm:text-xl md:text-2xl tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md bg-slate-300 text-slate-500 border-2 border-slate-400/50 cursor-not-allowed"  
+  >  
+    <i id="btn-select-icon" class="fa-solid fa-hand-pointer"></i>  
+    <span id="btn-select-label">SENTUH SALAH SATU KANDIDAT</span>  
+  </button>  
 </div>
 
-<div id="toast-notification" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] bg-slate-950 text-white border border-slate-700 px-4 py-2.5 rounded-full shadow-2xl text-xs sm:text-sm font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i><span id="toast-message">Notifikasi</span></div>
+  </div>  
+</main>  <section id="screen-confirm" class="hidden fixed inset-0 z-50 bg-white flex flex-col justify-between">  
+  <div class="confirm-content flex-1 flex flex-col items-center justify-center px-4 py-6">  
+    <div class="confirm-label mb-3 text-center">  
+      <span class="inline-block bg-slate-100 border border-slate-300 text-slate-700 text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">  
+        Konfirmasi Pilihan Anda &bull; Nomor Urut <span id="confirm-number">1</span>  
+      </span>  
+    </div>  
+    <div class="confirm-card-box w-64 h-72 sm:w-80 sm:h-96 bg-[#F50000] shadow-xl border-2 border-slate-300 overflow-hidden flex items-end justify-center relative">  
+      <div id="confirm-badge" class="absolute top-3 left-3 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white text-black font-black text-2xl sm:text-3xl flex items-center justify-center shadow-md z-10">1</div>  
+      <div id="confirm-portrait" class="w-full h-full flex items-end justify-center"></div>  
+    </div>  
+    <h2 id="confirm-name" class="mt-4 text-2xl sm:text-3xl font-black text-slate-900 tracking-wide uppercase text-center">KANDIDAT 1</h2>  
+  </div>  
+  <div class="confirm-actions w-full grid grid-cols-2 h-20 sm:h-24 shrink-0">  
+    <button onclick="cancelSelection()" class="bg-[#F50000] hover:bg-red-700 active:bg-red-800 transition flex items-center justify-center cursor-pointer border-r border-black/10">  
+      <span class="text-stroke-black text-3xl sm:text-5xl font-black tracking-wider uppercase">ULANGI</span>  
+    </button>  
+    <button onclick="confirmVote()" class="bg-[#1592E6] hover:bg-sky-600 active:bg-sky-700 transition flex items-center justify-center cursor-pointer">  
+      <span class="text-stroke-black text-3xl sm:text-5xl font-black tracking-wider uppercase">PILIH</span>  
+    </button>  
+  </div>  
+</section>  <section id="screen-receipt" class="hidden flex-1 flex flex-col items-center justify-center p-4 bg-slate-800">  
+  <div id="receipt-layout" class="max-w-md w-full flex flex-col items-center">  
+    <div id="receipt-notice" class="w-full bg-emerald-950/90 border border-emerald-700 text-emerald-100 rounded-xl px-4 py-3 mb-4 flex items-center gap-3 shadow-lg">  
+      <div class="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0 text-emerald-300">  
+        <i class="fa-solid fa-print"></i>  
+      </div>  
+      <div class="text-xs leading-relaxed">  
+        <p class="font-bold text-emerald-300 uppercase tracking-wide">Simulasi Selesai &amp; Struk Audit</p>  
+        <p class="text-emerald-100/90">QR berisi token demo acak, bukan identitas pemilih atau pilihan kandidat.</p>  
+      </div>  
+    </div>  <div id="receipt-paper" class="w-full max-w-[340px] drop-shadow-2xl animate-receipt">  
+  <div class="h-2.5 receipt-edge-top"></div>  
+  <div class="receipt-body bg-white text-slate-900 px-5 py-5 font-mono-receipt">  
+    <div class="text-center border-b-2 border-dashed border-slate-400 pb-2.5 mb-2.5">  
+      <p class="text-[11px] font-bold tracking-widest text-slate-500">BUKTI AUDIT SIMULASI</p>  
+      <h3 class="text-sm sm:text-base font-bold leading-tight mt-0.5">PILKADES PURWADADI</h3>  
+      <p class="text-[11px] text-slate-600">KEC. PURWADADI - KAB. SUBANG</p>  
+      <p class="text-[11px] font-bold mt-0.5">TPS DEMO &bull; TAHUN 2026</p>  
+    </div>  
+    <div class="text-[11px] space-y-1 border-b border-dashed border-slate-300 pb-2.5 mb-3">  
+      <div class="flex justify-between gap-2"><span class="text-slate-500">WAKTU :</span><span id="receipt-time" class="font-bold text-right">--/--/2026 --:--:--</span></div>  
+      <div class="flex justify-between gap-2"><span class="text-slate-500">NO. AUDIT :</span><span id="receipt-serial" class="font-bold">DEMO-0000</span></div>  
+      <div class="flex justify-between gap-2"><span class="text-slate-500">STATUS :</span><span class="font-bold">TOKEN DEMO</span></div>  
+    </div>  
+    <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-center relative overflow-hidden">  
+      <p class="text-[10px] font-bold tracking-wider text-slate-600 uppercase mb-1.5"><i class="fa-solid fa-shield-halved mr-1"></i>Token Audit Simulasi</p>  
+      <div id="qr-wrapper" class="relative bg-white p-1.5 border border-slate-200 rounded flex flex-col items-center justify-center">  
+        <div id="receipt-qrcode" class="flex items-center justify-center bg-white p-1"></div>  
+        <p id="receipt-token" class="text-[10px] tracking-wider font-bold text-slate-800 mt-1.5 text-center break-all">DEMO-XXXX-XXXX</p>  
+      </div>  
+    </div>  
+    <div class="text-center mt-3 pt-2 border-t-2 border-dashed border-slate-400">  
+      <p class="text-[10px] font-bold">MASUKKAN STRUK KE KOTAK AUDIT DEMO</p>  
+      <p class="text-[9px] text-slate-500 mt-0.5">Tidak untuk penggunaan pemilihan nyata</p>  
+    </div>  
+  </div>  
+  <div class="h-2.5 receipt-edge-bottom"></div>  
+</div>  
 
-<!-- Tombol admin demo disembunyikan dari tampilan utama. Shortcut: tekan A untuk rekap, R untuk reset; hanya untuk demo. -->
-<script>
-const candidates=[
- {id:1,name:"KANDIDAT 1",code:"K01",isPhoto:false},
- {id:2,name:"ABAD BADRUZAMAN",code:"K02",isPhoto:true,photoSrc:"Abad.jpeg"},
- {id:3,name:"KANDIDAT 3",code:"K03",isPhoto:false},
- {id:4,name:"KANDIDAT 4",code:"K04",isPhoto:false},
- {id:5,name:"KANDIDAT 5",code:"K05",isPhoto:false}
-];
-let selectedCandidate=null,currentReceiptData=null,hasVotedCurrentSession=false,auditBoxRecords=[];
-function getSilhouetteSVG(isConfirmation=false){
- const sizeClass=isConfirmation?"w-56 h-64 sm:w-64 sm:h-80":"w-full h-full";
- return `<svg class="${sizeClass}" viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg">
- <path d="M24 230 C24 176, 54 156, 76 150 L100 198 L124 150 C146 156, 176 176, 176 230 Z" fill="#26292E"/><path d="M76 150 L64 178 L84 186 L100 204 L116 186 L136 178 L124 150 L100 198 Z" fill="#181A1D"/><polygon points="78,148 122,148 100,202" fill="#FFFFFF"/><polygon points="94,152 106,152 104,163 96,163" fill="#2D3138"/><polygon points="96,163 104,163 108,195 100,204 92,195" fill="#2D3138"/><path d="M84 128 L84 152 Q100 162 116 152 L116 128 Z" fill="#FFFFFF" stroke="#26292E" stroke-width="3"/><ellipse cx="100" cy="86" rx="38" ry="48" fill="#FFFFFF" stroke="#26292E" stroke-width="3.5"/><path d="M62 82 C60 44, 80 28, 102 28 C126 28, 140 44, 138 82 C136 62, 126 48, 102 48 C78 48, 66 62, 62 82 Z" fill="#26292E"/></svg>`;
-}
-function renderCandidates(){
- const grid=document.getElementById('candidates-grid');
- grid.innerHTML=candidates.map(c=>{
-  let visual=c.isPhoto?`<img src="${c.photoSrc}" alt="${c.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-[88%] h-[92%] flex items-end justify-center\\'>${getSilhouetteSVG(false).replace(/'/g,"\\'")}</div>`:`<div class="w-[88%] h-[92%] flex items-end justify-center">${getSilhouetteSVG(false)}</div>`;
-  return `<button onclick="selectCandidate(${c.id})" class="group flex flex-col items-center focus:outline-none transition-transform duration-150 active:scale-95 cursor-pointer" aria-label="Pilih ${c.name}"><div class="candidate-card w-full aspect-[4/5] bg-white group-hover:bg-[#F50000] border-2 border-slate-400/80 group-hover:border-red-700 shadow-md relative overflow-hidden flex items-end justify-center transition-colors duration-150"><div class="absolute top-2 left-2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-300 text-black font-black text-lg sm:text-xl flex items-center justify-center shadow z-10">${c.id}</div>${visual}</div><span class="candidate-name mt-2 text-xs sm:text-sm md:text-base font-extrabold text-[#1E2022] tracking-wide uppercase">${c.name}</span></button>`;
- }).join('');
-}
-function selectCandidate(id){
- if(hasVotedCurrentSession){showToast("Sesi demo ini sudah selesai. Tekan R untuk mengulang sesi.");return;}
- selectedCandidate=candidates.find(c=>c.id===id);if(!selectedCandidate)return;
- document.getElementById('confirm-number').textContent=selectedCandidate.id;
- document.getElementById('confirm-badge').textContent=selectedCandidate.id;
- document.getElementById('confirm-name').textContent=selectedCandidate.name;
- const portrait=document.getElementById('confirm-portrait');
- portrait.innerHTML=selectedCandidate.isPhoto?`<img src="${selectedCandidate.photoSrc}" alt="${selectedCandidate.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-full h-full flex items-end justify-center\\'>${getSilhouetteSVG(true).replace(/'/g,"\\'")}</div>`:getSilhouetteSVG(true);
- document.getElementById('screen-confirm').classList.remove('hidden');
-}
-function cancelSelection(){selectedCandidate=null;document.getElementById('screen-confirm').classList.add('hidden')}
-function confirmVote(){
- if(!selectedCandidate)return;
- hasVotedCurrentSession=true;
- const randomSalt=Math.random().toString(36).substring(2,10).toUpperCase();
- const demoToken=`DEMO-${randomSalt}`;
- const now=new Date();
- const timestampStr=now.toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
- const serialId=`DEMO-${String(auditBoxRecords.length+1).padStart(4,'0')}`;
- currentReceiptData={serialId,timestamp:timestampStr,candidate:selectedCandidate,token:demoToken};
- document.getElementById('receipt-time').textContent=timestampStr;
- document.getElementById('receipt-serial').textContent=serialId;
- document.getElementById('receipt-token').textContent=demoToken;
- document.getElementById('scanner-decoded-text').textContent="Token demo berhasil ditampilkan (tidak memuat pilihan).";
- hideScannerResult();renderQRCode('receipt-qrcode',demoToken);
- document.getElementById('screen-confirm').classList.add('hidden');
- document.getElementById('screen-ballot').classList.add('hidden');
- document.getElementById('screen-receipt').classList.remove('hidden');
-}
-function renderQRCode(elementId,textData){
- const container=document.getElementById(elementId);container.innerHTML="";
- if(typeof QRCode==="undefined"){container.innerHTML='<p class="text-red-600 text-xs font-bold">Library QR tidak tersedia.</p>';return;}
- new QRCode(container,{text:textData,width:180,height:180,colorDark:"#0f172a",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
-}
-function simulateBarcodeScan(){
- const laser=document.getElementById('scanner-laser-line'),box=document.getElementById('scanner-result-box');
- laser.classList.remove('hidden');box.classList.add('hidden');
- setTimeout(()=>{laser.classList.add('hidden');box.classList.remove('hidden')},650);
-}
-function hideScannerResult(){document.getElementById('scanner-laser-line').classList.add('hidden');document.getElementById('scanner-result-box').classList.add('hidden')}
-function depositToAuditBox(){
- if(!currentReceiptData)return;
- auditBoxRecords.push(currentReceiptData);
- showToast("Simulasi selesai. Data demo tersimpan sementara di memori halaman.");
- currentReceiptData=null;selectedCandidate=null;
- document.getElementById('screen-receipt').classList.add('hidden');document.getElementById('screen-ballot').classList.remove('hidden');
-}
-function resetSimulation(){
- hasVotedCurrentSession=false;selectedCandidate=null;currentReceiptData=null;
- document.getElementById('screen-confirm').classList.add('hidden');document.getElementById('screen-receipt').classList.add('hidden');document.getElementById('screen-ballot').classList.remove('hidden');
- showToast("Sesi demo direset.");
-}
-function openAuditModal(){
- const total=auditBoxRecords.length;document.getElementById('modal-total-ballots').textContent=total;
- document.getElementById('rekap-list').innerHTML=candidates.map(c=>{
-  const count=auditBoxRecords.filter(r=>r.candidate.id===c.id).length,pct=total>0?Math.round(count/total*100):0;
-  return `<div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5"><div class="flex justify-between items-center text-xs font-bold mb-1 gap-2"><span>${String(c.id).padStart(2,'0')}. ${c.name}</span><span class="text-amber-300 whitespace-nowrap">${count} (${pct}%)</span></div><div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-sky-500 transition-all duration-300" style="width:${pct}%"></div></div></div>`;
- }).join('');
- document.getElementById('audit-modal').classList.remove('hidden');
-}
-function closeAuditModal(){document.getElementById('audit-modal').classList.add('hidden')}
-function clearAllVotes(){auditBoxRecords=[];openAuditModal();showToast("Data demo dikosongkan.");}
-function showToast(msg){
- const toast=document.getElementById('toast-notification');document.getElementById('toast-message').textContent=msg;toast.classList.remove('hidden');
- clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>toast.classList.add('hidden'),3000);
-}
-document.addEventListener('keydown',e=>{
- if(e.target&&['INPUT','TEXTAREA'].includes(e.target.tagName))return;
- if(e.key.toLowerCase()==='a')openAuditModal();
- if(e.key.toLowerCase()==='r')resetSimulation();
- if(e.key==='Escape'){closeAuditModal();cancelSelection();hideScannerResult();}
-});
-window.onload=renderCandidates;
-</script>
-</body>
+<div id="receipt-actions" class="w-full max-w-[340px] mt-5 space-y-2.5">  
+  <button onclick="printThermalReceipt()" class="w-full bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 border border-amber-300 font-extrabold py-3 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg cursor-pointer">  
+    <i class="fa-solid fa-print text-base"></i><span>Cetak Thermal</span>  
+  </button>  
+  <button onclick="depositToAuditBox()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm sm:text-base transition flex items-center justify-center gap-2 shadow-lg cursor-pointer">  
+    <i class="fa-solid fa-box-archive"></i><span>Selesaikan Simulasi &amp; Kembali</span>  
+  </button>  
+</div>
+
+  </div>  
+</section>  <div id="audit-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">  
+  <div id="audit-modal-panel" class="bg-slate-900 border border-slate-700 text-slate-100 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl">  
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">  
+      <div>  
+        <h3 class="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">  
+          <i class="fa-solid fa-chart-column text-amber-400"></i><span>Rekapitulasi Simulasi</span>  
+        </h3>  
+        <p class="text-xs text-slate-400">Data demo lokal dalam memori browser</p>  
+      </div>  
+      <button onclick="closeAuditModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">  
+        <i class="fa-solid fa-xmark"></i>  
+      </button>  
+    </div>  
+    <div class="grid grid-cols-2 gap-3 mb-4">  
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3">  
+        <p class="text-[11px] text-slate-400 uppercase font-bold">Total Simulasi</p>  
+        <p id="modal-total-ballots" class="text-2xl font-black text-emerald-400 mt-0.5">0</p>  
+      </div>  
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3">  
+        <p class="text-[11px] text-slate-400 uppercase font-bold">Mode</p>  
+        <p class="text-sm font-bold text-sky-300 mt-1.5"><i class="fa-solid fa-circle-info mr-1"></i>Demo saja</p>  
+      </div>  
+    </div>  
+    <div id="rekap-list" class="space-y-2.5 mb-5"></div>  
+    <div class="flex flex-wrap justify-between items-center gap-2 pt-3 border-t border-slate-800">  
+      <button onclick="clearAllVotes()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1">  
+        <i class="fa-solid fa-trash-can mr-1"></i>Kosongkan Data Demo  
+      </button>  
+      <div class="flex items-center gap-2">  
+        <button onclick="closeAuditModal(); resetSimulation();" class="bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl">  
+          <i class="fa-solid fa-rotate-right mr-1"></i>Reset Sesi  
+        </button>  
+        <button onclick="closeAuditModal()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl">Tutup</button>  
+      </div>  
+    </div>  
+  </div>  
+</div>  <div id="toast-notification" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] bg-slate-950 text-white border border-slate-700 px-4 py-2.5 rounded-full shadow-2xl text-xs sm:text-sm font-semibold flex items-center gap-2">  
+  <i class="fa-solid fa-circle-check text-emerald-400"></i><span id="toast-message">Notifikasi</span>  
+</div>  <script>  
+const candidates = [  
+  { id: 1, name: "ABAD BADRUZAMAN", code: "K01", isPhoto: true, photoSrc: "Abad.jpeg" },  
+  { id: 2, name: "ABAD BADRUZAMAN", code: "K02", isPhoto: true, photoSrc: "Abad.jpeg" },  
+  {id: 3, name: "ABAD BADRUZAMAN", code: "K03", isPhoto: true, photoSrc: "Abad.jpeg" },  
+  {id: 4, name: "ABAD BADRUZAMAN", code: "K04", isPhoto: true, photoSrc: "Abad.jpeg" },  
+  {id: 5, name: "ABAD BADRUZAMAN", code: "K05", isPhoto: true, photoSrc: "Abad.jpeg" }  
+];  
+let selectedCandidate = null, currentReceiptData = null, hasVotedCurrentSession = false, auditBoxRecords = [];  
+  
+function getSilhouetteSVG(isConfirmation = false) {  
+  const sizeClass = isConfirmation ? "w-full h-full max-w-[240px] max-h-[280px]" : "w-full h-full";  
+  return `<svg class="${sizeClass}" viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg">  
+  <path d="M24 230 C24 176, 54 156, 76 150 L100 198 L124 150 C146 156, 176 176, 176 230 Z" fill="#26292E"/>  
+  <path d="M76 150 L64 178 L84 186 L100 204 L116 186 L136 178 L124 150 L100 198 Z" fill="#181A1D"/>  
+  <polygon points="78,148 122,148 100,202" fill="#FFFFFF"/>  
+  <polygon points="94,152 106,152 104,163 96,163" fill="#2D3138"/>  
+  <polygon points="96,163 104,163 108,195 100,204 92,195" fill="#2D3138"/>  
+  <path d="M84 128 L84 152 Q100 162 116 152 L116 128 Z" fill="#FFFFFF" stroke="#26292E" stroke-width="3"/>  
+  <ellipse cx="100" cy="86" rx="38" ry="48" fill="#FFFFFF" stroke="#26292E" stroke-width="3.5"/>  
+  <path d="M62 82 C60 44, 80 28, 102 28 C126 28, 140 44, 138 82 C136 62, 126 48, 102 48 C78 48, 66 62, 62 82 Z" fill="#26292E"/></svg>`;  
+}  
+  
+function renderCandidates() {  
+  const grid = document.getElementById('candidates-grid');  
+  grid.innerHTML = candidates.map(c => {  
+    const isSelected = selectedCandidate && selectedCandidate.id === c.id;  
+    const cardStateClass = isSelected  
+      ? "bg-[#F50000] border-4 border-sky-500 ring-4 ring-sky-400/50 scale-[1.02]"  
+      : "bg-white hover:bg-[#F50000]/90 border-2 border-slate-400/80 hover:border-red-700";  
+    const badgeStateClass = isSelected  
+      ? "bg-sky-500 text-white border-white"  
+      : "bg-white text-black border-slate-300";  
+    const nameStateClass = isSelected  
+      ? "text-sky-700 font-black"  
+      : "text-[#1E2022] font-extrabold";  
+  
+    let visual = c.isPhoto  
+      ? `<img src="${c.photoSrc}" alt="${c.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-[88%] h-[92%] flex items-end justify-center\\'>${getSilhouetteSVG(false).replace(/'/g, "\\'")}</div>`  
+      : `<div class="w-[88%] h-[92%] flex items-end justify-center">${getSilhouetteSVG(false)}</div>`;  
+  
+    return `<button onclick="highlightCandidate(${c.id})" class="group flex flex-col items-center focus:outline-none transition-transform duration-150 active:scale-95 cursor-pointer" aria-label="Pilih ${c.name}">  
+      <div class="candidate-card w-full aspect-[4/5] ${cardStateClass} shadow-md relative overflow-hidden flex items-end justify-center transition-all duration-150">  
+        <div class="candidate-badge absolute top-2 left-2 w-8 h-8 sm:w-10 sm:h-10 rounded-full border ${badgeStateClass} font-black text-lg sm:text-xl flex items-center justify-center shadow z-10">${c.id}</div>  
+        ${isSelected ? '<div class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10"><i class="fa-solid fa-check text-xs sm:text-sm"></i></div>' : ''}  
+        ${visual}  
+      </div>  
+      <span class="candidate-name mt-2 text-xs sm:text-sm md:text-base ${nameStateClass} tracking-wide uppercase">${c.name}</span>  
+    </button>`;  
+  }).join('');  
+}  
+  
+function updateSelectBar() {  
+  const btn = document.getElementById('btn-select-candidate');  
+  const icon = document.getElementById('btn-select-icon');  
+  const label = document.getElementById('btn-select-label');  
+  
+  if (selectedCandidate) {  
+    btn.disabled = false;  
+    btn.className = "w-full h-14 sm:h-16 rounded-2xl font-black text-base sm:text-xl md:text-2xl tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-2.5 shadow-xl bg-[#1592E6] hover:bg-sky-600 active:bg-sky-700 text-white border-2 border-sky-300 cursor-pointer";  
+    icon.className = "fa-solid fa-circle-check text-xl sm:text-2xl";  
+    label.textContent = `PILIH KANDIDAT INI (NO. ${selectedCandidate.id})`;  
+  } else {  
+    btn.disabled = true;  
+    btn.className = "w-full h-14 sm:h-16 rounded-2xl font-black text-base sm:text-xl md:text-2xl tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md bg-slate-300 text-slate-500 border-2 border-slate-400/50 cursor-not-allowed";  
+    icon.className = "fa-solid fa-hand-pointer";  
+    label.textContent = "SENTUH SALAH SATU KANDIDAT";  
+  }  
+}  
+  
+function highlightCandidate(id) {  
+  if (hasVotedCurrentSession) {  
+    showToast("Sesi demo ini sudah selesai. Tahan logo 2 detik atau tekan R untuk mengulang.");  
+    return;  
+  }  
+  const found = candidates.find(c => c.id === id);  
+  if (!found) return;  
+  selectedCandidate = found;  
+  renderCandidates();  
+  updateSelectBar();  
+}  
+  
+function proceedToConfirm() {  
+  if (!selectedCandidate) return;  
+  document.getElementById('confirm-number').textContent = selectedCandidate.id;  
+  document.getElementById('confirm-badge').textContent = selectedCandidate.id;  
+  document.getElementById('confirm-name').textContent = selectedCandidate.name;  
+  const portrait = document.getElementById('confirm-portrait');  
+  portrait.innerHTML = selectedCandidate.isPhoto  
+    ? `<img src="${selectedCandidate.photoSrc}" alt="${selectedCandidate.name}" class="w-full h-full object-cover object-top" onerror="this.outerHTML='<div class=\\'w-full h-full flex items-end justify-center\\'>${getSilhouetteSVG(true).replace(/'/g, "\\'")}</div>`  
+    : `<div class="w-full h-full flex items-end justify-center">${getSilhouetteSVG(true)}</div>`;  
+  document.getElementById('screen-confirm').classList.remove('hidden');  
+}  
+  
+function cancelSelection() {  
+  selectedCandidate = null;  
+  renderCandidates();  
+  updateSelectBar();  
+  document.getElementById('screen-confirm').classList.add('hidden');  
+}  
+  
+function confirmVote() {  
+  if (!selectedCandidate) return;  
+  hasVotedCurrentSession = true;  
+  const randomSalt = Math.random().toString(36).substring(2, 10).toUpperCase();  
+  const demoToken = `DEMO-${randomSalt}`;  
+  const now = new Date();  
+  const timestampStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });  
+  const serialId = `DEMO-${String(auditBoxRecords.length + 1).padStart(4, '0')}`;  
+  currentReceiptData = { serialId, timestamp: timestampStr, candidate: selectedCandidate, token: demoToken };  
+  document.getElementById('receipt-time').textContent = timestampStr;  
+  document.getElementById('receipt-serial').textContent = serialId;  
+  document.getElementById('receipt-token').textContent = demoToken;  
+  renderQRCode('receipt-qrcode', demoToken);  
+  document.getElementById('screen-confirm').classList.add('hidden');  
+  document.getElementById('screen-ballot').classList.add('hidden');  
+  document.getElementById('screen-receipt').classList.remove('hidden');  
+}  
+  
+function renderQRCode(elementId, textData) {  
+  const container = document.getElementById(elementId);  
+  container.innerHTML = "";  
+  if (typeof QRCode === "undefined") {  
+    container.innerHTML = '<p class="text-red-600 text-xs font-bold">Library QR tidak tersedia.</p>';  
+    return;  
+  }  
+  new QRCode(container, { text: textData, width: 170, height: 170, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });  
+}  
+  
+function printThermalReceipt() {  
+  showToast("Menyiapkan cetak struk thermal...");  
+  setTimeout(() => {  
+    window.print();  
+  }, 150);  
+}  
+  
+function depositToAuditBox() {  
+  if (!currentReceiptData) return;  
+  auditBoxRecords.push(currentReceiptData);  
+  showToast("Simulasi selesai. Data demo tersimpan sementara di memori halaman.");  
+  currentReceiptData = null;  
+  selectedCandidate = null;  
+  renderCandidates();  
+  updateSelectBar();  
+  document.getElementById('screen-receipt').classList.add('hidden');  
+  document.getElementById('screen-ballot').classList.remove('hidden');  
+}  
+  
+function resetSimulation() {  
+  hasVotedCurrentSession = false;  
+  selectedCandidate = null;  
+  currentReceiptData = null;  
+  renderCandidates();  
+  updateSelectBar();  
+  document.getElementById('screen-confirm').classList.add('hidden');  
+  document.getElementById('screen-receipt').classList.add('hidden');  
+  document.getElementById('screen-ballot').classList.remove('hidden');  
+  showToast("Sesi demo direset.");  
+}  
+  
+function openAuditModal() {  
+  const total = auditBoxRecords.length;  
+  document.getElementById('modal-total-ballots').textContent = total;  
+  document.getElementById('rekap-list').innerHTML = candidates.map(c => {  
+    const count = auditBoxRecords.filter(r => r.candidate.id === c.id).length, pct = total > 0 ? Math.round(count / total * 100) : 0;  
+    return `<div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5"><div class="flex justify-between items-center text-xs font-bold mb-1 gap-2"><span>${String(c.id).padStart(2, '0')}. ${c.name}</span><span class="text-amber-300 whitespace-nowrap">${count} (${pct}%)</span></div><div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-sky-500 transition-all duration-300" style="width:${pct}%"></div></div></div>`;  
+  }).join('');  
+  document.getElementById('audit-modal').classList.remove('hidden');  
+}  
+  
+function closeAuditModal() { document.getElementById('audit-modal').classList.add('hidden'); }  
+function clearAllVotes() { auditBoxRecords = []; openAuditModal(); showToast("Data demo dikosongkan."); }  
+  
+function showToast(msg) {  
+  const toast = document.getElementById('toast-notification');  
+  document.getElementById('toast-message').textContent = msg;  
+  toast.classList.remove('hidden');  
+  clearTimeout(window.toastTimer);  
+  window.toastTimer = setTimeout(() => toast.classList.add('hidden'), 3000);  
+}  
+  
+// Dukungan Akses Panitia/Bimtek di Layar Sentuh (Tahan Logo 1.8 detik)  
+let emblemPressTimer;  
+const emblemEl = document.getElementById('emblem');  
+const startPress = () => { emblemPressTimer = setTimeout(() => openAuditModal(), 1800); };  
+const cancelPress = () => clearTimeout(emblemPressTimer);  
+emblemEl.addEventListener('touchstart', startPress, { passive: true });  
+emblemEl.addEventListener('touchend', cancelPress);  
+emblemEl.addEventListener('touchmove', cancelPress);  
+emblemEl.addEventListener('mousedown', startPress);  
+emblemEl.addEventListener('mouseup', cancelPress);  
+emblemEl.addEventListener('mouseleave', cancelPress);  
+  
+document.addEventListener('keydown', e => {  
+  if (e.target && ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;  
+  if (e.key.toLowerCase() === 'a') openAuditModal();  
+  if (e.key.toLowerCase() === 'r') resetSimulation();  
+  if (e.key === 'Escape') { closeAuditModal(); cancelSelection(); }  
+});  
+  
+window.onload = () => {  
+  renderCandidates();  
+  updateSelectBar();  
+};  
+</script>  </body>  
 </html>
